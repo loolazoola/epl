@@ -22,7 +22,7 @@ describe('Database Schema Integrity Property Tests', () => {
     home_score: fc.option(fc.integer({ min: 0, max: 20 })),
     away_score: fc.option(fc.integer({ min: 0, max: 20 })),
     status: fc.constantFrom('TIMED', 'IN_PLAY', 'PAUSED', 'FINISHED'),
-    kickoff_time: fc.date({ min: new Date('2024-01-01T00:00:00Z'), max: new Date('2025-12-31T23:59:59Z') }).map(d => d.toISOString()),
+    kickoff_time: fc.integer({ min: Date.parse('2024-01-01T00:00:00Z'), max: Date.parse('2025-12-31T23:59:59Z') }).map(timestamp => new Date(timestamp).toISOString()),
     gameweek: fc.option(fc.integer({ min: 1, max: 38 })),
     season: fc.constantFrom('2024-25', '2025-26')
   })

@@ -32,8 +32,8 @@ const mockParsedMatch = (): fc.Arbitrary<ParsedMatch> => {
     home_score: fc.option(fc.integer({ min: 0, max: 10 }), { nil: null }),
     away_score: fc.option(fc.integer({ min: 0, max: 10 }), { nil: null }),
     status: fc.constantFrom('TIMED', 'IN_PLAY', 'PAUSED', 'FINISHED'),
-    kickoff_time: fc.date({ min: new Date('2023-08-01T00:00:00Z'), max: new Date('2025-05-31T23:59:59Z') })
-      .map(date => date.toISOString()),
+    kickoff_time: fc.integer({ min: Date.parse('2023-08-01T00:00:00Z'), max: Date.parse('2025-05-31T23:59:59Z') })
+      .map(timestamp => new Date(timestamp).toISOString()),
     gameweek: fc.integer({ min: 1, max: 38 }),
     season: fc.constantFrom('2023-2024', '2024-2025'),
   });

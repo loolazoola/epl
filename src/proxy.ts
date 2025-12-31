@@ -2,13 +2,13 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
-    // Additional middleware logic can be added here
+  function proxy(req) {
+    // Additional proxy logic can be added here
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token, req }) => {
+      authorized: ({ token }) => {
         // Check if user has a valid token
         if (!token) {
           return false;

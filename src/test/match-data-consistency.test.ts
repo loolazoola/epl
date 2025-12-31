@@ -22,8 +22,8 @@ import { getPremierLeagueMatches } from '../lib/football-api';
 const mockFootballDataMatch = (): fc.Arbitrary<FootballDataMatch> => {
   return fc.record({
     id: fc.integer({ min: 1, max: 999999 }),
-    utcDate: fc.date({ min: new Date('2023-08-01T00:00:00Z'), max: new Date('2025-05-31T23:59:59Z') })
-      .map(date => date.toISOString()),
+    utcDate: fc.integer({ min: Date.parse('2023-08-01T00:00:00Z'), max: Date.parse('2025-05-31T23:59:59Z') })
+      .map(timestamp => new Date(timestamp).toISOString()),
     status: fc.constantFrom('TIMED', 'IN_PLAY', 'PAUSED', 'FINISHED', 'POSTPONED', 'SUSPENDED', 'CANCELLED'),
     matchday: fc.integer({ min: 1, max: 38 }),
     homeTeam: fc.record({
