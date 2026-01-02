@@ -2,14 +2,24 @@
  * Match cache utilities to avoid unnecessary API calls and syncing
  */
 
-import { fetchPremierLeagueMatches, ParsedMatch } from './football-api'
-
 const CACHE_KEY = 'match_sync_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 interface CacheEntry {
   timestamp: number;
   externalIds: string[];
+}
+
+interface ParsedMatch {
+  external_id: string;
+  home_team: string;
+  away_team: string;
+  home_score: number | null;
+  away_score: number | null;
+  status: 'TIMED' | 'IN_PLAY' | 'PAUSED' | 'FINISHED';
+  kickoff_time: string;
+  gameweek: number;
+  season: string;
 }
 
 interface MatchCacheEntry {
@@ -41,6 +51,8 @@ export async function getCachedMatches(
   }
 
   try {
+    // Import dynamically to avoid circular dependency
+    const { fetchPremierLeagueMatches } = await import('./football-api');
     const matches = await fetchPremierLeagueMatches(dateFrom, dateTo);
     
     // Cache the results
