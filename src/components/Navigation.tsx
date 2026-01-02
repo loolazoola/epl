@@ -15,7 +15,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
     { href: '/results', label: 'Results', icon: '⚽' },
     { href: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
     { href: '/table', label: 'Table', icon: '📊' },
-    { href: '/api-test', label: 'API Test', icon: '🔧' },
+    // API Test route is hidden from navigation but remains accessible via direct URL
   ];
 
   return (

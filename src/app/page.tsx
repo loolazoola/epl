@@ -134,14 +134,7 @@ export default function Home() {
               <div className="text-sm text-muted-foreground">League standings</div>
             </a>
             
-            <a 
-              href="/api-test" 
-              className="pl-card pl-card-hover group p-6 text-center transition-all duration-200 hover:border-muted-foreground/30"
-            >
-              <div className="text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform">🔧</div>
-              <div className="font-semibold text-card-foreground mb-1">API Test</div>
-              <div className="text-sm text-muted-foreground">Test connection</div>
-            </a>
+            {/* API Test card is hidden from UI but route remains accessible via direct URL */}
           </div>
 
           {/* Feature Cards */}
