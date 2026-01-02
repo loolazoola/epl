@@ -319,9 +319,8 @@ export function getRateLimitStatus() {
 
 /**
  * Get Premier League matches with caching (recommended for production use)
- * This function is re-exported from match-cache.ts to provide caching functionality
+ * Import getCachedMatches directly from match-cache.ts to avoid circular dependency
  */
-export { getCachedMatches } from './match-cache';
 
 // Export types for use in other modules
 export type { ParsedMatch, FootballDataMatch, MatchesResponse, Competition, ApiResponse };
