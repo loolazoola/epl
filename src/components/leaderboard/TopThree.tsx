@@ -75,7 +75,7 @@ export default function TopThree({ entries, currentUserId, className = "" }: Top
           {podiumOrder.map((entry, index) => {
             const isCurrentUser = currentUserId === entry.user.id;
             return (
-              <div key={entry.user.id} className="flex flex-col items-center">
+              <div key={`${entry.user.id}-${index}`} className="flex flex-col items-center">
                 {/* User Avatar and Info */}
                 <div className={`mb-2 text-center ${isCurrentUser ? 'ring-2 ring-purple-500 ring-opacity-50 rounded-lg p-2' : ''}`}>
                   {entry.user.avatar_url ? (
@@ -124,8 +124,8 @@ export default function TopThree({ entries, currentUserId, className = "" }: Top
 
         {/* Additional Stats */}
         <div className="grid grid-cols-3 gap-4 text-center border-t pt-4">
-          {topThree.map((entry) => (
-            <div key={entry.user.id} className="text-center">
+          {topThree.map((entry, index) => (
+            <div key={`${entry.user.id}-stats-${index}`} className="text-center">
               <div className="text-xs text-gray-500 mb-1">
                 {getRankEmoji(entry.rank)} {entry.user.name || 'Unknown User'}
               </div>

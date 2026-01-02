@@ -10,14 +10,19 @@ import TopThree from "@/components/leaderboard/TopThree";
 import { useRealtimeSubscription } from "@/components/RealtimeProvider";
 
 interface LeaderboardEntry {
-  user_id: string;
-  user_name: string;
-  user_email: string;
-  user_avatar_url?: string;
-  total_points: number;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatar_url?: string;
+    total_points: number;
+    created_at: string;
+    updated_at: string;
+  };
+  rank: number;
+  points: number;
   correct_predictions: number;
   total_predictions: number;
-  rank: number;
 }
 
 export default function LeaderboardPage() {
@@ -65,24 +70,24 @@ export default function LeaderboardPage() {
     }
   };
 
-  const transformLeaderboardData = (data: LeaderboardEntry[]): any[] => {
+  const transformLeaderboardData = (data: any[]): any[] => {
     return data.map(entry => ({
       user: {
-        id: entry.user_id,
-        name: entry.user_name,
-        email: entry.user_email,
-        avatar_url: entry.user_avatar_url,
-        total_points: entry.total_points,
+        id: entry.user.id,
+        name: entry.user.name,
+        email: entry.user.email,
+        avatar_url: entry.user.avatar_url,
+        total_points: entry.user.total_points,
       },
       rank: entry.rank,
-      points: entry.total_points,
+      points: entry.points,
       correct_predictions: entry.correct_predictions,
       total_predictions: entry.total_predictions,
     }));
   };
 
   const transformedLeaderboard = transformLeaderboardData(leaderboard);
-  const currentUserEntry = leaderboard.find(entry => entry.user_email === session?.user?.email);
+  const currentUserEntry = leaderboard.find(entry => entry.user.email === session?.user?.email);
 
   if (loading) {
     return (
@@ -204,7 +209,7 @@ export default function LeaderboardPage() {
                       <div className="text-sm text-muted-foreground">Rank</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-pl-secondary">{currentUserEntry.total_points}</div>
+                      <div className="text-2xl font-bold text-pl-secondary">{currentUserEntry.points}</div>
                       <div className="text-sm text-muted-foreground">Points</div>
                     </div>
                     <div className="text-center">
@@ -252,7 +257,7 @@ export default function LeaderboardPage() {
                 <div className="pl-card p-6 text-center">
                   <div className="text-3xl font-bold text-pl-accent mb-2">
                     {leaderboard.length > 0 ? Math.round(
-                      leaderboard.reduce((sum, entry) => sum + entry.total_points, 0) / leaderboard.length
+                      leaderboard.reduce((sum, entry) => sum + (entry.points || 0), 0) / leaderboard.length
                     ) : 0}
                   </div>
                   <div className="text-muted-foreground">Average Points</div>

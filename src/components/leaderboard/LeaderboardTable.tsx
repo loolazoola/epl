@@ -123,11 +123,11 @@ export default function LeaderboardTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {entries.map((entry) => {
+            {entries.map((entry, index) => {
               const isCurrentUserRow = isCurrentUser(entry.user.id);
               return (
                 <tr 
-                  key={entry.user.id}
+                  key={`${entry.user.id}-${index}`}
                   className={`hover:bg-gray-50 transition-colors ${
                     isCurrentUserRow ? 'bg-purple-50 border-l-4 border-purple-500' : ''
                   }`}
