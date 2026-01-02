@@ -19,14 +19,16 @@ export async function createUserProfile(userData: {
   avatar_url?: string | null;
 }): Promise<{ user: User | null; error: string | null }> {
   try {
-    const { data, error } = await supabase
+    const insertData = {
+      email: userData.email,
+      name: userData.name,
+      avatar_url: userData.avatar_url || null,
+      total_points: 0, // Initialize with zero points as per requirement 1.3
+    }
+
+    const { data, error } = await (supabase as any)
       .from("users")
-      .insert({
-        email: userData.email,
-        name: userData.name,
-        avatar_url: userData.avatar_url || null,
-        total_points: 0, // Initialize with zero points as per requirement 1.3
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -108,12 +110,14 @@ export async function updateUserProfile(
   updates: UserUpdate
 ): Promise<{ user: User | null; error: string | null }> {
   try {
-    const { data, error } = await supabase
+    const updateData = {
+      ...updates,
+      updated_at: new Date().toISOString(),
+    }
+
+    const { data, error } = await (supabase as any)
       .from("users")
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", userId)
       .select()
       .single();
@@ -147,12 +151,14 @@ export async function updateUserPoints(
 
     const newTotalPoints = currentUser.total_points + pointsToAdd;
 
-    const { data, error } = await supabase
+    const updateData = {
+      total_points: newTotalPoints,
+      updated_at: new Date().toISOString(),
+    }
+
+    const { data, error } = await (supabase as any)
       .from("users")
-      .update({
-        total_points: newTotalPoints,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", userId)
       .select()
       .single();
@@ -196,7 +202,7 @@ export async function getOrCreateUserProfile(userData: {
           existingUser.id,
           {
             name: userData.name,
-            avatar_url: userData.avatar_url,
+            avatar_url: userData.avatar_url || undefined,
           }
         );
 

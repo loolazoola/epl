@@ -13,7 +13,8 @@ export default function Navigation({ className = "" }: NavigationProps) {
     { href: '/', label: 'Home', icon: '🏠' },
     { href: '/matches', label: 'Fixtures', icon: '📅' },
     { href: '/results', label: 'Results', icon: '⚽' },
-    { href: '/table', label: 'Table', icon: '🏆' },
+    { href: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
+    { href: '/table', label: 'Table', icon: '📊' },
     { href: '/api-test', label: 'API Test', icon: '🔧' },
   ];
 
@@ -25,14 +26,14 @@ export default function Navigation({ className = "" }: NavigationProps) {
           <a
             key={item.href}
             href={item.href}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus-visible ${
               isActive
-                ? 'bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-pl-primary text-pl-white shadow-md'
+                : 'bg-card text-card-foreground hover:bg-muted hover:shadow-sm border border-border'
             }`}
           >
-            <span>{item.icon}</span>
-            <span>{item.label}</span>
+            <span className="text-base">{item.icon}</span>
+            <span className="hidden sm:inline">{item.label}</span>
           </a>
         );
       })}

@@ -1,21 +1,30 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, Roboto } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/SessionProvider';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { RealtimeProvider } from '@/components/RealtimeProvider';
 
-const geistSans = Geist({
+const inter = Inter({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
+const roboto = Roboto({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: 'Premier League Predictions',
   description: 'Predict Premier League match scores and compete on the leaderboard',
+  keywords: ['Premier League', 'football', 'predictions', 'leaderboard', 'EPL'],
+  authors: [{ name: 'Premier League Predictions' }],
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#38003c',
 };
 
 export default function RootLayout({
@@ -24,13 +33,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+    <html lang="en" className={`${inter.variable} ${roboto.variable}`}>
+      <body className="antialiased min-h-screen bg-background text-foreground">
+        <ErrorBoundary>
+          <SessionProvider>
+            <RealtimeProvider>
+              <div className="flex flex-col min-h-screen">
+                {children}
+              </div>
+            </RealtimeProvider>
+          </SessionProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

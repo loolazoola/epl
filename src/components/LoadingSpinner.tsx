@@ -15,11 +15,18 @@ export default function LoadingSpinner({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[200px] space-y-4">
-      <div
-        className={`animate-spin rounded-full border-b-2 border-purple-600 ${sizeClasses[size]}`}
-      ></div>
+      <div className="relative">
+        <div
+          className={`animate-spin rounded-full border-2 border-muted border-t-pl-primary ${sizeClasses[size]}`}
+        ></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-pl-primary text-xs">⚽</span>
+        </div>
+      </div>
       {message && (
-        <p className="text-gray-600 text-sm font-medium">{message}</p>
+        <p className="text-muted-foreground text-sm font-medium text-center max-w-xs">
+          {message}
+        </p>
       )}
     </div>
   );

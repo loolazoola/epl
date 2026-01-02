@@ -1,26 +1,203 @@
 @import 'tailwindcss';
 
 :root {
+  /* Premier League Brand Colors */
+  --pl-primary: #38003c;      /* Premier League Purple */
+  --pl-secondary: #00ff87;    /* Premier League Green */
+  --pl-accent: #e90052;       /* Premier League Pink */
+  --pl-white: #ffffff;
+  --pl-black: #000000;
+  
+  /* Semantic Colors */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #38003c;
+  --muted: #f8f9fa;
+  --muted-foreground: #6c757d;
+  --border: #e9ecef;
+  --input: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #38003c;
+  --popover: #ffffff;
+  --popover-foreground: #38003c;
+  --primary: #38003c;
+  --primary-foreground: #ffffff;
+  --secondary: #f8f9fa;
+  --secondary-foreground: #38003c;
+  --accent: #00ff87;
+  --accent-foreground: #38003c;
+  --destructive: #dc3545;
+  --destructive-foreground: #ffffff;
+  --ring: #38003c;
+  --radius: 0.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-ring: var(--ring);
+  
+  /* Premier League specific colors */
+  --color-pl-primary: var(--pl-primary);
+  --color-pl-secondary: var(--pl-secondary);
+  --color-pl-accent: var(--pl-accent);
+  --color-pl-white: var(--pl-white);
+  --color-pl-black: var(--pl-black);
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --border-radius: var(--radius);
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f0f0f;
+    --foreground: #ffffff;
+    --muted: #1a1a1a;
+    --muted-foreground: #a1a1aa;
+    --border: #27272a;
+    --input: #1a1a1a;
+    --card: #1a1a1a;
+    --card-foreground: #ffffff;
+    --popover: #1a1a1a;
+    --popover-foreground: #ffffff;
+    --secondary: #27272a;
+    --secondary-foreground: #ffffff;
+    --accent: #00ff87;
+    --accent-foreground: #000000;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
   }
+}
+
+/* Base styles */
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premier League specific utility classes */
+.pl-gradient {
+  background: linear-gradient(135deg, var(--pl-primary) 0%, #4a0e4e  100%);
+}
+
+.pl-gradient-secondary {
+  background: linear-gradient(135deg, var(--pl-secondary) 0%, #00cc6a 100%);
+}
+
+.pl-text-gradient {
+  background: linear-gradient(135deg, var(--pl-primary) 0%, var(--pl-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card styles */
+.pl-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.pl-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.pl-card-hover:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* Button styles */
+.pl-button-primary {
+  background: var(--pl-primary);
+  color: var(--pl-white);
+  border: 1px solid var(--pl-primary);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.pl-button-primary:hover {
+  background: #2d0030;
+  border-color: #2d0030;
+}
+
+.pl-button-secondary {
+  background: var(--pl-secondary);
+  color: var(--pl-primary);
+  border: 1px solid var(--pl-secondary);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.pl-button-secondary:hover {
+  background: #00e67a;
+  border-color: #00e67a;
+}
+
+/* Loading animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--pl-secondary);
+  outline-offset: 2px;
 }

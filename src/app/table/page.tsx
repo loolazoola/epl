@@ -75,72 +75,119 @@ export default function TablePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading table...</p>
-        </div>
+      <div className="min-h-screen bg-background">
+        <header className="pl-gradient shadow-lg border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-pl-secondary rounded-lg flex items-center justify-center">
+                <span className="text-pl-primary font-bold text-xl">📊</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-pl-white">
+                Premier League Table
+              </h1>
+            </div>
+            <Navigation />
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pl-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading table...</p>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 text-xl mb-4">⚠️ Error</div>
-          <p className="text-gray-600">{error}</p>
-          <button 
-            onClick={fetchStandings}
-            className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen bg-background">
+        <header className="pl-gradient shadow-lg border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-pl-secondary rounded-lg flex items-center justify-center">
+                <span className="text-pl-primary font-bold text-xl">📊</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-pl-white">
+                Premier League Table
+              </h1>
+            </div>
+            <Navigation />
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="pl-card text-center p-8">
+            <div className="text-destructive text-5xl mb-4">⚠️</div>
+            <h2 className="text-xl font-semibold text-card-foreground mb-2">Error Loading Table</h2>
+            <p className="text-muted-foreground mb-6">{error}</p>
+            <button 
+              onClick={fetchStandings}
+              className="pl-button-primary px-6 py-3 rounded-lg font-medium"
+            >
+              Try Again
+            </button>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Premier League Table</h1>
-          <p className="text-gray-600 mb-4">Current standings for the 2025/26 season</p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="pl-gradient shadow-lg border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-pl-secondary rounded-lg flex items-center justify-center">
+              <span className="text-pl-primary font-bold text-xl">📊</span>
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-pl-white">
+                Premier League Table
+              </h1>
+              <p className="text-pl-white/80 text-sm">Current standings for the 2025/26 season</p>
+            </div>
+          </div>
           <Navigation />
         </div>
+      </header>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {table.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No table data available</p>
+          <div className="pl-card text-center p-12">
+            <div className="text-muted-foreground text-5xl mb-4">📊</div>
+            <h2 className="text-xl font-semibold text-card-foreground mb-2">No Table Data</h2>
+            <p className="text-muted-foreground">Table data is not available at the moment</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+          <div className="pl-card overflow-hidden">
             {/* Legend */}
-            <div className="bg-gray-50 px-6 py-4 border-b">
+            <div className="bg-muted/50 px-6 py-4 border-b border-border">
               <div className="flex flex-wrap gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-100 border border-green-200 rounded"></div>
-                  <span className="text-gray-600">Champions League (1-4)</span>
+                  <span className="text-muted-foreground">Champions League (1-4)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
-                  <span className="text-gray-600">Europa League (5)</span>
+                  <span className="text-muted-foreground">Europa League (5)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-purple-100 border border-purple-200 rounded"></div>
-                  <span className="text-gray-600">Conference League (6)</span>
+                  <span className="text-muted-foreground">Conference League (6)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-red-100 border border-red-200 rounded"></div>
-                  <span className="text-gray-600">Relegation (18-20)</span>
+                  <span className="text-muted-foreground">Relegation (18-20)</span>
                 </div>
               </div>
             </div>
 
             {/* Table Header */}
-            <div className="bg-gray-50 border-b">
-              <div className="grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-gray-600">
+            <div className="bg-muted/30 border-b border-border">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3 text-sm font-medium text-muted-foreground">
                 <div className="col-span-1 text-center">Pos</div>
                 <div className="col-span-4">Team</div>
                 <div className="col-span-1 text-center">P</div>
@@ -153,11 +200,11 @@ export default function TablePage() {
             </div>
 
             {/* Table Body */}
-            <div className="divide-y">
+            <div className="divide-y divide-border">
               {table.map((entry) => (
                 <div 
                   key={entry.team.id} 
-                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-muted/30 transition-colors"
                 >
                   {/* Position */}
                   <div className="col-span-1 flex items-center justify-center">
@@ -170,22 +217,24 @@ export default function TablePage() {
 
                   {/* Team */}
                   <div className="col-span-4 flex items-center space-x-3">
-                    <img 
-                      src={entry.team.crest} 
-                      alt={entry.team.name}
-                      className="w-8 h-8 object-contain"
-                      onError={(e) => {
-                        e.currentTarget.src = '/placeholder-team.svg';
-                      }}
-                    />
+                    <div className="w-8 h-8 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <img 
+                        src={entry.team.crest} 
+                        alt={entry.team.name}
+                        className="w-6 h-6 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder-team.svg';
+                        }}
+                      />
+                    </div>
                     <div>
-                      <div className="font-medium text-gray-900">{entry.team.shortName}</div>
-                      <div className="text-sm text-gray-500 hidden sm:block">{entry.team.name}</div>
+                      <div className="font-medium text-card-foreground">{entry.team.shortName}</div>
+                      <div className="text-sm text-muted-foreground hidden sm:block">{entry.team.name}</div>
                     </div>
                   </div>
 
                   {/* Played */}
-                  <div className="col-span-1 text-center text-gray-900 font-medium">
+                  <div className="col-span-1 text-center text-card-foreground font-medium">
                     {entry.playedGames}
                   </div>
 
@@ -207,14 +256,14 @@ export default function TablePage() {
                   {/* Goal Difference */}
                   <div className={`col-span-1 text-center font-medium ${
                     entry.goalDifference > 0 ? 'text-green-600' : 
-                    entry.goalDifference < 0 ? 'text-red-600' : 'text-gray-600'
+                    entry.goalDifference < 0 ? 'text-red-600' : 'text-muted-foreground'
                   }`}>
                     {entry.goalDifference > 0 ? '+' : ''}{entry.goalDifference}
                   </div>
 
                   {/* Points */}
                   <div className="col-span-2 text-center">
-                    <span className="text-xl font-bold text-gray-900">{entry.points}</span>
+                    <span className="text-xl font-bold text-card-foreground">{entry.points}</span>
                   </div>
                 </div>
               ))}
@@ -225,7 +274,7 @@ export default function TablePage() {
         <div className="mt-8 text-center">
           <button 
             onClick={fetchStandings}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="pl-button-primary px-6 py-3 rounded-lg font-medium"
           >
             Refresh Table
           </button>
@@ -234,36 +283,40 @@ export default function TablePage() {
         {/* Additional Stats */}
         {table.length > 0 && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Top Scorer (Goals For)</h3>
+            <div className="pl-card p-6">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Top Scorer (Goals For)</h3>
               <div className="flex items-center space-x-3">
-                <img 
-                  src={table[0].team.crest} 
-                  alt={table[0].team.name}
-                  className="w-8 h-8 object-contain"
-                />
+                <div className="w-8 h-8 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <img 
+                    src={table[0].team.crest} 
+                    alt={table[0].team.name}
+                    className="w-6 h-6 object-contain"
+                  />
+                </div>
                 <div>
-                  <div className="font-medium">{table[0].team.shortName}</div>
-                  <div className="text-2xl font-bold text-green-600">{table[0].goalsFor} goals</div>
+                  <div className="font-medium text-card-foreground">{table[0].team.shortName}</div>
+                  <div className="text-2xl font-bold text-pl-secondary">{table[0].goalsFor} goals</div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Best Defense (Goals Against)</h3>
+            <div className="pl-card p-6">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Best Defense (Goals Against)</h3>
               <div className="flex items-center space-x-3">
                 {(() => {
                   const bestDefense = [...table].sort((a, b) => a.goalsAgainst - b.goalsAgainst)[0];
                   return (
                     <>
-                      <img 
-                        src={bestDefense.team.crest} 
-                        alt={bestDefense.team.name}
-                        className="w-8 h-8 object-contain"
-                      />
+                      <div className="w-8 h-8 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <img 
+                          src={bestDefense.team.crest} 
+                          alt={bestDefense.team.name}
+                          className="w-6 h-6 object-contain"
+                        />
+                      </div>
                       <div>
-                        <div className="font-medium">{bestDefense.team.shortName}</div>
-                        <div className="text-2xl font-bold text-blue-600">{bestDefense.goalsAgainst} goals</div>
+                        <div className="font-medium text-card-foreground">{bestDefense.team.shortName}</div>
+                        <div className="text-2xl font-bold text-pl-primary">{bestDefense.goalsAgainst} goals</div>
                       </div>
                     </>
                   );
@@ -271,21 +324,23 @@ export default function TablePage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Most Games Played</h3>
+            <div className="pl-card p-6">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Most Games Played</h3>
               <div className="flex items-center space-x-3">
                 {(() => {
                   const mostGames = [...table].sort((a, b) => b.playedGames - a.playedGames)[0];
                   return (
                     <>
-                      <img 
-                        src={mostGames.team.crest} 
-                        alt={mostGames.team.name}
-                        className="w-8 h-8 object-contain"
-                      />
+                      <div className="w-8 h-8 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <img 
+                          src={mostGames.team.crest} 
+                          alt={mostGames.team.name}
+                          className="w-6 h-6 object-contain"
+                        />
+                      </div>
                       <div>
-                        <div className="font-medium">{mostGames.team.shortName}</div>
-                        <div className="text-2xl font-bold text-purple-600">{mostGames.playedGames} games</div>
+                        <div className="font-medium text-card-foreground">{mostGames.team.shortName}</div>
+                        <div className="text-2xl font-bold text-pl-accent">{mostGames.playedGames} games</div>
                       </div>
                     </>
                   );
@@ -294,7 +349,7 @@ export default function TablePage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

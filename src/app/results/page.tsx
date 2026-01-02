@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Navigation from "@/components/Navigation";
 
 interface Match {
@@ -32,19 +33,50 @@ interface Match {
   };
 }
 
+interface Prediction {
+  id: string;
+  match_id: string;
+  predicted_home_score: number;
+  predicted_away_score: number;
+  points_earned: number;
+  processed: boolean;
+}
+
 interface MatchesResponse {
   matches: Match[];
   count: number;
 }
 
 export default function ResultsPage() {
+  const { data: session } = useSession();
   const [matches, setMatches] = useState<Match[]>([]);
+  const [predictions, setPredictions] = useState<Record<string, Prediction>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchResults();
-  }, []);
+    if (session) {
+      fetchPredictions();
+    }
+  }, [session]);
+
+  const fetchPredictions = async () => {
+    try {
+      const response = await fetch('/api/predictions');
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const predictionMap: Record<string, Prediction> = {};
+        result.data.forEach((prediction: Prediction) => {
+          predictionMap[prediction.match_id] = prediction;
+        });
+        setPredictions(predictionMap);
+      }
+    } catch (err) {
+      console.error('Failed to fetch predictions:', err);
+    }
+  };
 
   const fetchResults = async () => {
     try {
@@ -134,30 +166,35 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Premier League Results</h1>
-          <p className="text-gray-600 mb-4">Recent match results from the last 30 days</p>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="pl-gradient shadow-lg border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-pl-secondary rounded-lg flex items-center justify-center">
+              <span className="text-pl-primary font-bold text-xl">⚽</span>
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-pl-white">
+                Premier League Results
+              </h1>
+              <p className="text-pl-white/80 text-sm">Recent match results from the last 30 days</p>
+            </div>
+          </div>
           <Navigation />
         </div>
+      </header>
 
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {matches.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No recent results found</p>
-            <p className="text-gray-400 text-sm mt-2">Check back after some matches have been played</p>
+          <div className="pl-card text-center p-12">
+            <div className="text-muted-foreground text-5xl mb-4">⚽</div>
+            <h2 className="text-xl font-semibold text-card-foreground mb-2">No Recent Results</h2>
+            <p className="text-muted-foreground">Check back after some matches have been played</p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {matches.reduce((acc, match) => {
-              const matchDate = formatDate(match.utcDate);
-              if (!acc[matchDate]) {
-                acc[matchDate] = [];
-              }
-              acc[matchDate].push(match);
-              return acc;
-            }, {} as Record<string, Match[]>)
-            && Object.entries(
+          <div className="space-y-8">
+            {Object.entries(
               matches.reduce((acc, match) => {
                 const matchDate = formatDate(match.utcDate);
                 if (!acc[matchDate]) {
@@ -167,87 +204,123 @@ export default function ResultsPage() {
                 return acc;
               }, {} as Record<string, Match[]>)
             ).map(([date, dayMatches]) => (
-              <div key={date} className="bg-white rounded-lg shadow-sm border">
-                <div className="bg-gray-50 px-6 py-3 border-b">
-                  <h2 className="text-lg font-semibold text-gray-900">{date}</h2>
-                </div>
-                <div className="divide-y">
-                  {dayMatches.map((match) => (
-                    <div key={match.id} className="p-6 hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-6 flex-1">
-                          {/* Home Team */}
-                          <div className="flex items-center space-x-3 w-48">
-                            <img 
-                              src={match.homeTeam.crest} 
-                              alt={match.homeTeam.name}
-                              className="w-8 h-8 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.src = '/placeholder-team.svg';
-                              }}
-                            />
-                            <span className={`font-medium truncate ${
-                              getResultColor(
-                                match.score.fullTime.home || 0, 
-                                match.score.fullTime.away || 0, 
-                                true
-                              )
-                            }`}>
-                              {match.homeTeam.shortName}
-                            </span>
-                          </div>
-
-                          {/* Score */}
-                          <div className="text-center min-w-[120px]">
-                            <div className="text-2xl font-bold text-gray-900 mb-1">
-                              {getScoreDisplay(match.score.fullTime.home, match.score.fullTime.away)}
-                            </div>
-                            {match.score.halfTime.home !== null && match.score.halfTime.away !== null && (
-                              <div className="text-sm text-gray-500">
-                                HT: {match.score.halfTime.home} - {match.score.halfTime.away}
+              <div key={date} className="space-y-4">
+                <h2 className="text-xl font-bold text-card-foreground flex items-center gap-2">
+                  <span className="w-1 h-6 bg-pl-primary rounded-full"></span>
+                  {date}
+                </h2>
+                <div className="space-y-4">
+                  {dayMatches.map((match) => {
+                    const prediction = predictions[match.id.toString()];
+                    
+                    return (
+                      <div key={match.id} className="pl-card p-6">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-6 flex-1">
+                              {/* Home Team */}
+                              <div className="flex items-center space-x-3 w-48">
+                                <div className="w-10 h-10 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <img 
+                                    src={match.homeTeam.crest} 
+                                    alt={match.homeTeam.name}
+                                    className="w-6 h-6 object-contain"
+                                    onError={(e) => {
+                                      e.currentTarget.src = '/placeholder-team.svg';
+                                    }}
+                                  />
+                                </div>
+                                <span className={`font-medium truncate ${
+                                  getResultColor(
+                                    match.score.fullTime.home || 0, 
+                                    match.score.fullTime.away || 0, 
+                                    true
+                                  )
+                                }`}>
+                                  {match.homeTeam.shortName}
+                                </span>
                               </div>
-                            )}
+
+                              {/* Score */}
+                              <div className="text-center min-w-[120px]">
+                                <div className="text-2xl font-bold text-card-foreground mb-1">
+                                  {getScoreDisplay(match.score.fullTime.home, match.score.fullTime.away)}
+                                </div>
+                                {match.score.halfTime.home !== null && match.score.halfTime.away !== null && (
+                                  <div className="text-sm text-muted-foreground">
+                                    HT: {match.score.halfTime.home} - {match.score.halfTime.away}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Away Team */}
+                              <div className="flex items-center space-x-3 w-48 justify-end">
+                                <span className={`font-medium truncate ${
+                                  getResultColor(
+                                    match.score.fullTime.home || 0, 
+                                    match.score.fullTime.away || 0, 
+                                    false
+                                  )
+                                }`}>
+                                  {match.awayTeam.shortName}
+                                </span>
+                                <div className="w-10 h-10 bg-pl-primary/10 border border-pl-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <img 
+                                    src={match.awayTeam.crest} 
+                                    alt={match.awayTeam.name}
+                                    className="w-6 h-6 object-contain"
+                                    onError={(e) => {
+                                      e.currentTarget.src = '/placeholder-team.svg';
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Match Info */}
+                            <div className="flex items-center space-x-4 ml-6">
+                              <div className="text-right">
+                                <div className="text-sm text-muted-foreground">
+                                  {formatTime(match.utcDate)}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  MD {match.matchday}
+                                </div>
+                              </div>
+                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-pl-secondary/20 text-pl-primary border border-pl-secondary/30">
+                                FT
+                              </span>
+                            </div>
                           </div>
 
-                          {/* Away Team */}
-                          <div className="flex items-center space-x-3 w-48 justify-end">
-                            <span className={`font-medium truncate ${
-                              getResultColor(
-                                match.score.fullTime.home || 0, 
-                                match.score.fullTime.away || 0, 
-                                false
-                              )
-                            }`}>
-                              {match.awayTeam.shortName}
-                            </span>
-                            <img 
-                              src={match.awayTeam.crest} 
-                              alt={match.awayTeam.name}
-                              className="w-8 h-8 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.src = '/placeholder-team.svg';
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Match Info */}
-                        <div className="flex items-center space-x-4 ml-6">
-                          <div className="text-right">
-                            <div className="text-sm text-gray-500">
-                              {formatTime(match.utcDate)}
+                          {/* Prediction Results */}
+                          {session && prediction && (
+                            <div className="border-t border-border pt-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                  <div className="text-sm text-muted-foreground">Your prediction:</div>
+                                  <div className="font-medium text-card-foreground">
+                                    {prediction.predicted_home_score} - {prediction.predicted_away_score}
+                                  </div>
+                                </div>
+                                {prediction.processed && (
+                                  <div className={`text-sm font-bold px-3 py-1 rounded-full ${
+                                    prediction.points_earned === 5 ? 'bg-green-100 text-green-800 border border-green-200' :
+                                    prediction.points_earned === 2 ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                                    'bg-red-100 text-red-800 border border-red-200'
+                                  }`}>
+                                    {prediction.points_earned === 5 ? '🎯 Exact! +5 pts' :
+                                     prediction.points_earned === 2 ? '✅ Outcome! +2 pts' :
+                                     '❌ Wrong +0 pts'}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="text-sm text-gray-500">
-                              MD {match.matchday}
-                            </div>
-                          </div>
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            FT
-                          </span>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -257,7 +330,7 @@ export default function ResultsPage() {
         <div className="mt-8 text-center">
           <button 
             onClick={fetchResults}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="pl-button-primary px-6 py-3 rounded-lg font-medium"
           >
             Refresh Results
           </button>
@@ -265,35 +338,45 @@ export default function ResultsPage() {
 
         {/* Quick Stats */}
         {matches.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Matches</h3>
-              <div className="text-3xl font-bold text-purple-600">{matches.length}</div>
-              <p className="text-sm text-gray-500 mt-1">In the last 30 days</p>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="pl-card p-6 text-center">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Total Matches</h3>
+              <div className="text-3xl font-bold text-pl-primary">{matches.length}</div>
+              <p className="text-sm text-muted-foreground mt-1">In the last 30 days</p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Goals</h3>
-              <div className="text-3xl font-bold text-green-600">
+            <div className="pl-card p-6 text-center">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Total Goals</h3>
+              <div className="text-3xl font-bold text-pl-secondary">
                 {matches.reduce((total, match) => 
                   total + (match.score.fullTime.home || 0) + (match.score.fullTime.away || 0), 0
                 )}
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Avg: {(matches.reduce((total, match) => 
                   total + (match.score.fullTime.home || 0) + (match.score.fullTime.away || 0), 0
                 ) / Math.max(matches.length, 1)).toFixed(1)} per match
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Draws</h3>
+            <div className="pl-card p-6 text-center">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Your Points</h3>
+              <div className="text-3xl font-bold text-pl-accent">
+                {Object.values(predictions).reduce((total, pred) => total + pred.points_earned, 0)}
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                From {Object.values(predictions).filter(p => p.processed).length} predictions
+              </p>
+            </div>
+
+            <div className="pl-card p-6 text-center">
+              <h3 className="text-lg font-semibold text-card-foreground mb-2">Draws</h3>
               <div className="text-3xl font-bold text-yellow-600">
                 {matches.filter(match => 
                   match.score.fullTime.home === match.score.fullTime.away
                 ).length}
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {((matches.filter(match => 
                   match.score.fullTime.home === match.score.fullTime.away
                 ).length / Math.max(matches.length, 1)) * 100).toFixed(1)}% of matches
@@ -301,7 +384,7 @@ export default function ResultsPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
