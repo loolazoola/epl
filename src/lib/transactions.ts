@@ -333,19 +333,21 @@ export async function atomicPredictionSubmission(predictionData: {
     }
 
     // Check if match exists and get its details
-    const { data: match, error: matchError } = await supabase
+    const { data: matchData, error: matchError } = await supabase
       .from('matches')
       .select('id, kickoff_time, status')
       .eq('id', predictionData.matchId)
       .single()
 
-    if (matchError || !match) {
+    if (matchError || !matchData) {
       console.error('Match not found:', matchError)
       return {
         success: false,
         error: 'Match not found'
       }
     }
+
+    const match = matchData as { id: string; kickoff_time: string; status: string }
 
     // Check if match has already started or finished
     if (match.status !== 'TIMED') {
@@ -367,7 +369,7 @@ export async function atomicPredictionSubmission(predictionData: {
     }
 
     // Check if user already has a prediction for this match
-    const { data: existingPrediction, error: existingError } = await supabase
+    const { data: existingPredictionData, error: existingError } = await supabase
       .from('predictions')
       .select('id')
       .eq('user_id', predictionData.userId)
@@ -382,10 +384,11 @@ export async function atomicPredictionSubmission(predictionData: {
       }
     }
 
-    if (existingPrediction) {
+    if (existingPredictionData) {
+      const existingPrediction = existingPredictionData as { id: string }
       // Update existing prediction
       console.log('Updating existing prediction:', existingPrediction.id)
-      const { data: updatedPrediction, error: updateError } = await supabase
+      const { data: updatedPrediction, error: updateError } = await (supabase as any)
         .from('predictions')
         .update({
           predicted_home_score: predictionData.predictedHomeScore,
@@ -413,7 +416,7 @@ export async function atomicPredictionSubmission(predictionData: {
 
     // Create new prediction
     console.log('Creating new prediction')
-    const { data: newPrediction, error: createError } = await supabase
+    const { data: newPrediction, error: createError } = await (supabase as any)
       .from('predictions')
       .insert({
         user_id: predictionData.userId,

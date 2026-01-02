@@ -278,6 +278,23 @@ export async function getPremierLeagueMatches(
 }
 
 /**
+ * Fetch Premier League matches (alias for getPremierLeagueMatches)
+ * Used by caching layer
+ */
+export async function fetchPremierLeagueMatches(
+  dateFrom?: string,
+  dateTo?: string
+): Promise<ParsedMatch[]> {
+  const response = await getPremierLeagueMatches(dateFrom, dateTo);
+  
+  if (response.error || !response.data) {
+    throw new Error(response.error || 'Failed to fetch matches');
+  }
+  
+  return response.data;
+}
+
+/**
  * Get current Premier League standings
  */
 export async function getPremierLeagueStandings(): Promise<ApiResponse<any>> {
