@@ -81,19 +81,22 @@ export default function TopThree({ entries, currentUserId, className = "" }: Top
                   {entry.user.avatar_url ? (
                     <img
                       src={entry.user.avatar_url}
-                      alt={entry.user.name}
+                      alt={entry.user.name || 'User'}
                       className="w-16 h-16 rounded-full border-4 border-white shadow-lg mx-auto mb-2"
                     />
                   ) : (
                     <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center border-4 border-white shadow-lg mx-auto mb-2">
                       <span className="text-xl font-bold text-purple-600">
-                        {entry.user.name.charAt(0).toUpperCase()}
+                        {entry.user.name && entry.user.name.length > 0 
+                          ? entry.user.name.charAt(0).toUpperCase() 
+                          : '?'
+                        }
                       </span>
                     </div>
                   )}
                   
                   <div className="text-sm font-medium text-gray-900 truncate max-w-[80px]">
-                    {entry.user.name}
+                    {entry.user.name || 'Unknown User'}
                   </div>
                   
                   {isCurrentUser && (
@@ -124,7 +127,7 @@ export default function TopThree({ entries, currentUserId, className = "" }: Top
           {topThree.map((entry) => (
             <div key={entry.user.id} className="text-center">
               <div className="text-xs text-gray-500 mb-1">
-                {getRankEmoji(entry.rank)} {entry.user.name}
+                {getRankEmoji(entry.rank)} {entry.user.name || 'Unknown User'}
               </div>
               <div className="text-sm font-medium text-gray-900">
                 {entry.correct_predictions}/{entry.total_predictions} correct

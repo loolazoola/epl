@@ -68,19 +68,22 @@ export default function LeaderboardCard({
           {entry.user.avatar_url ? (
             <img
               src={entry.user.avatar_url}
-              alt={entry.user.name}
+              alt={entry.user.name || 'User'}
               className="w-12 h-12 rounded-full border-2 border-gray-200"
             />
           ) : (
             <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
               <span className="text-lg font-bold text-purple-600">
-                {entry.user.name.charAt(0).toUpperCase()}
+                {entry.user.name && entry.user.name.length > 0 
+                  ? entry.user.name.charAt(0).toUpperCase() 
+                  : '?'
+                }
               </span>
             </div>
           )}
           <div className="flex-1 min-w-0">
             <div className="font-medium text-gray-900 truncate">
-              {entry.user.name}
+              {entry.user.name || 'Unknown User'}
             </div>
             <div className="text-sm text-gray-500 truncate">
               {entry.user.email}

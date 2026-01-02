@@ -145,13 +145,16 @@ export default function LeaderboardTable({
                       {entry.user.avatar_url ? (
                         <img
                           src={entry.user.avatar_url}
-                          alt={entry.user.name}
+                          alt={entry.user.name || 'User'}
                           className="w-8 h-8 rounded-full border-2 border-gray-200"
                         />
                       ) : (
                         <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                           <span className="text-xs font-bold text-purple-600">
-                            {entry.user.name.charAt(0).toUpperCase()}
+                            {entry.user.name && entry.user.name.length > 0 
+                              ? entry.user.name.charAt(0).toUpperCase() 
+                              : '?'
+                            }
                           </span>
                         </div>
                       )}
@@ -159,7 +162,7 @@ export default function LeaderboardTable({
                         <div className={`font-medium ${
                           isCurrentUserRow ? 'text-purple-900' : 'text-gray-900'
                         }`}>
-                          {entry.user.name}
+                          {entry.user.name || 'Unknown User'}
                           {isCurrentUserRow && (
                             <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
                               You
