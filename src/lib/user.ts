@@ -1,10 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "./supabase";
 import { Database } from "@/types/database";
-
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export type User = Database["public"]["Tables"]["users"]["Row"];
 export type UserInsert = Database["public"]["Tables"]["users"]["Insert"];
@@ -19,6 +14,8 @@ export async function createUserProfile(userData: {
   avatar_url?: string | null;
 }): Promise<{ user: User | null; error: string | null }> {
   try {
+    const supabase = createServerClient();
+    
     const insertData = {
       email: userData.email,
       name: userData.name,
@@ -51,6 +48,8 @@ export async function getUserProfileByEmail(
   email: string
 ): Promise<{ user: User | null; error: string | null }> {
   try {
+    const supabase = createServerClient();
+    
     const { data, error } = await supabase
       .from("users")
       .select("*")
@@ -80,6 +79,8 @@ export async function getUserProfileById(
   userId: string
 ): Promise<{ user: User | null; error: string | null }> {
   try {
+    const supabase = createServerClient();
+    
     const { data, error } = await supabase
       .from("users")
       .select("*")
@@ -110,6 +111,8 @@ export async function updateUserProfile(
   updates: UserUpdate
 ): Promise<{ user: User | null; error: string | null }> {
   try {
+    const supabase = createServerClient();
+    
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString(),
@@ -142,6 +145,8 @@ export async function updateUserPoints(
   pointsToAdd: number
 ): Promise<{ user: User | null; error: string | null }> {
   try {
+    const supabase = createServerClient();
+    
     // First get current points
     const { user: currentUser, error: fetchError } = await getUserProfileById(userId);
     
